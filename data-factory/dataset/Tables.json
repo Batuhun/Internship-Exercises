@@ -1,0 +1,13 @@
+{
+	"name": "Tables",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "OnPremise",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "PostgreSqlTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

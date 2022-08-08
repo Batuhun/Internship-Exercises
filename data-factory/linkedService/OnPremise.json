@@ -1,0 +1,16 @@
+{
+	"name": "OnPremise",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "PostgreSql",
+		"typeProperties": {
+			"connectionString": "host=localhost;port=5432;database=azure;uid=postgres;encryptionmethod=0",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJkMTQxY2U0ZS1iYTQyLTRkZDEtYWIwNS1mOTBhNmRiM2FkMTQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "integrationRuntimeSelf",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

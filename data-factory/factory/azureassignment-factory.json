@@ -1,0 +1,9 @@
+{
+	"name": "azureassignment-factory",
+	"location": "northeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "546c0722-b2dc-478f-88ca-9e5d185cc99a",
+		"tenantId": "6a3548ab-7570-4271-91a8-58da00697029"
+	}
+}

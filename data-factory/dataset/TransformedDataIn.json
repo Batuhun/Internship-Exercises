@@ -1,0 +1,42 @@
+{
+	"name": "TransformedDataIn",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "transformation zone",
+				"fileSystem": "datatransformation"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"active": {
+					"type": "boolean"
+				},
+				"certificationid": {
+					"type": "integer"
+				},
+				"completiondate": {
+					"type": "string"
+				},
+				"completionduration": {
+					"type": "string"
+				},
+				"courseid": {
+					"type": "integer"
+				},
+				"userid": {
+					"type": "integer"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

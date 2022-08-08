@@ -1,0 +1,99 @@
+{
+	"name": "Slice Flow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "TransformedDataIn",
+						"type": "DatasetReference"
+					},
+					"name": "Table"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SlicedData",
+						"type": "DatasetReference"
+					},
+					"name": "Sink"
+				},
+				{
+					"dataset": {
+						"referenceName": "SlicedData",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FindYear"
+				},
+				{
+					"name": "RemoveYear"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "RemoveYear2"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     file as string,",
+				"     year as integer",
+				"}",
+				"source(output(",
+				"          active as boolean,",
+				"          certificationid as integer,",
+				"          completiondate as string,",
+				"          completionduration as string,",
+				"          courseid as integer,",
+				"          userid as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     limit: 100,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine',",
+				"     wildcardPaths:[(concat('transformation zone/',$file))]) ~> Table",
+				"Table derive(each(match(right(name,4)=='date'), 'year' = left(toString($$), 4))) ~> FindYear",
+				"split1@chosen select(mapColumn(",
+				"          each(match(name!='year'))",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> RemoveYear",
+				"FindYear split(toInteger(year)==$year,",
+				"     disjoint: false) ~> split1@(chosen, rest)",
+				"split1@rest select(mapColumn(",
+				"          each(match(name!='year'))",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> RemoveYear2",
+				"RemoveYear sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     filePattern:(concat(toString($year),'/good',$file)),",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 2) ~> Sink",
+				"RemoveYear2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     filePattern:(concat(toString($year),'/bad',$file)),",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1) ~> sink2"
+			]
+		}
+	}
+}

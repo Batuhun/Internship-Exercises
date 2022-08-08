@@ -1,0 +1,63 @@
+{
+	"name": "Update Flow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "RawDataIn",
+						"type": "DatasetReference"
+					},
+					"name": "Table"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "TransformationData",
+						"type": "DatasetReference"
+					},
+					"name": "Sink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DateChange"
+				},
+				{
+					"name": "StringNullFill"
+				},
+				{
+					"name": "IntNullFill"
+				},
+				{
+					"name": "BooleanNullFill"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     file as string",
+				"}",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine',",
+				"     wildcardPaths:[(concat('raw/',$file))]) ~> Table",
+				"Table derive(each(match(type=='string'), $$ = iif(isDate($$), left($$,10), toString($$)))) ~> DateChange",
+				"DateChange derive(each(match(type=='string'), $$ = iifNull( toString($$) , 'Unknown'))) ~> StringNullFill",
+				"StringNullFill derive(each(match(type=='integer'), $$ = iifNull( toInteger($$) , 0))) ~> IntNullFill",
+				"IntNullFill derive(each(match(type=='boolean'), $$ = iifNull( toBoolean($$) , false()))) ~> BooleanNullFill",
+				"BooleanNullFill sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     filePattern:($file),",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> Sink"
+			]
+		}
+	}
+}
